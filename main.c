@@ -8,6 +8,8 @@
 #define TRUE    1
 #define FALSE   0
 
+#define CHECK_BIT(var, pos) ((var) & (1<<(pos)))
+
 static const unsigned long kRgCsr = 0x330;
 static const unsigned long kRgA = 0x332;
 static const unsigned long kRgB = 0x334;
@@ -42,6 +44,24 @@ void WriteCommand()
     usleep(5);
 }
 
+double GetAngle(unsigned short reg)
+{
+    double result = 0;
+    double weight = 45.0/8192.0;
+
+    int i;
+
+    for (i = 0; i < 16; i++)
+    {
+        if ( CHECK_BIT(reg, i) )
+            result += weight;
+
+        weight = weight * 2;
+    }
+
+    return result;
+}
+
 int main(int argc, char **argv)
 {
     OpenPort();
@@ -62,6 +82,7 @@ int main(int argc, char **argv)
         {
             printf("kRgA = 0x%x\n", rg_a);
             printf("kRgB = 0x%x\n", rg_b);
+            printf("angle = %f\n", GetAngle(rg_a));
             break;
         }
     }
