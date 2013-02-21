@@ -15,6 +15,8 @@ static const unsigned long kRgA = 0x332;
 static const unsigned long kRgB = 0x334;
 static const unsigned long kRegistersCount = 16;
 
+static const int kCommandDelay = 1000;
+
 void OpenPort()
 {
     int rc;
@@ -28,20 +30,18 @@ void OpenPort()
 
 void StartDevice()
 {
-    outb(0x00, kRgCsr);
-    outb(0x01, kRgCsr + 1);
-    usleep(5);
-    outw(0x0000, kRgCsr);
-    usleep(5);
+    outw(0x0100, kRgCsr);
+    usleep(kCommandDelay);
+    outw(0x0020, kRgCsr);
+    usleep(kCommandDelay);
 }
 
 void WriteCommand()
 {
     outw(0x0000, kRgA);
-    usleep(5);
-    outw(0x00, kRgB);
-    outw(0x0B, kRgB + 1);
-    usleep(5);
+    usleep(kCommandDelay);
+    outw(0x0B00, kRgB);
+    usleep(kCommandDelay);
 }
 
 double GetAngle(unsigned short reg)
@@ -73,17 +73,17 @@ int main(int argc, char **argv)
 
     while (TRUE)
     {
+        system("clear");
+
         WriteCommand();
 
         rg_a = inw(kRgA);
         rg_b = inw(kRgB);
 
-        if ( (rg_a != 0x20) && (rg_b != 0x20) )
-        {
-            printf("kRgA = 0x%x\n", rg_a);
-            printf("kRgB = 0x%x\n", rg_b);
-            printf("angle = %f\n", GetAngle(rg_a));
-            break;
-        }
+        printf("kRgA = 0x%x\n", rg_a);
+        printf("kRgB = 0x%x\n", rg_b);
+        printf("angle = %f\n", GetAngle(rg_a));
+
+        usleep(100 * 1000);
     }
 }
