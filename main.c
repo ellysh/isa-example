@@ -32,7 +32,7 @@ void StartDevice()
 {
     outw(0x0100, kRgCsr);
     usleep(kCommandDelay);
-    outw(0x0020, kRgCsr);
+    outw(0x0000, kRgCsr);
     usleep(kCommandDelay);
 }
 
@@ -70,6 +70,7 @@ int main(int argc, char **argv)
 
     unsigned short rg_a;
     unsigned short rg_b;
+    unsigned short rg_c;
 
     while (TRUE)
     {
@@ -79,9 +80,11 @@ int main(int argc, char **argv)
 
         rg_a = inw(kRgA);
         rg_b = inw(kRgB);
+        rg_c = inw(kRgCsr);
 
         printf("kRgA = 0x%x\n", rg_a);
         printf("kRgB = 0x%x\n", rg_b);
+        printf("kRgC = 0x%x\n", rg_c);
         printf("angle = %f\n", GetAngle(rg_a));
 
         usleep(100 * 1000);
